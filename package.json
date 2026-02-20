@@ -1,0 +1,14 @@
+{
+  "name": "whatsapp-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "openai": "^4.28.0",
+    "twilio": "^4.21.0"
+  }
+}
