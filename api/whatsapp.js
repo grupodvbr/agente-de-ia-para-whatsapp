@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import twilio from "twilio";
+import querystring from "querystring";
 
 export default async function handler(req, res) {
   try {
@@ -7,7 +8,13 @@ export default async function handler(req, res) {
       return res.status(405).send("Method Not Allowed");
     }
 
-    const { Body, From } = req.body || {};
+    // 👇 Parse do body da Twilio (form-urlencoded)
+    const body =
+      typeof req.body === "string"
+        ? querystring.parse(req.body)
+        : req.body;
+
+    const { Body, From } = body || {};
 
     if (!Body || !From) {
       return res.status(200).end();
@@ -17,7 +24,6 @@ export default async function handler(req, res) {
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    // Contexto inicial do agente (ajustamos depois)
     const contexto = `
 Você é um agente virtual da Mercatto Delícia.
 Atenda clientes no WhatsApp de forma educada, objetiva e profissional.
@@ -44,7 +50,7 @@ Se não souber responder, encaminhe para atendimento humano.
 
     await client.messages.create({
       body: resposta,
-      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      from: process.env.TWILIO_WHATSAPP_NUMBER, // whatsapp:+14155238886 (sandbox)
       to: From
     });
 
